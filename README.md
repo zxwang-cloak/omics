@@ -193,9 +193,35 @@ _Step 2: Run the freec pipeline_
 cd /path/out/CNV/freec/tumor && freec -conf TUMOR-config_control-freec.txt
 ```
 ## WGBS CpG calling
+**Generate pipeline with the perl script we made**
 
+_Step 1: Make the samples.lst file (table split)_
+```
+sample1 /path/data/sample1_f1.fq.gz /path/data/sample1_r2.fq.gz
+sample2 /path/data/sample2_f1.fq.gz /path/data/sample2_r2.fq.gz
+...
+sampleN /path/data/sampleN_f1.fq.gz /path/data/sampleN_r2.fq.gz
+```
 
+_Step 2: Make the config.txt file (table split)_
+```
+# sample
+SAMPLE	./samples.lst
+# genome
+GENOME	/path/ref
+# output
+OUTDIR	./wgbs_out
+```
 
+_Step 3: Generate the pipeline_
+```
+perl wgbs.pl config.txt
+```
+
+_Step 4: Run the pipeline_
+```
+cd ./wgbs_out/SAMPLE_ID && make
+```
 
 ## RNA-seq gene/transcript expression calling
 

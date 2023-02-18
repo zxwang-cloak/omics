@@ -149,10 +149,49 @@ cd /path/out/Manta/candidateSmallIndels/TUMOR && python runWorkflow.py
 ```
 
 ### Somatic CNV
+**calling using Control-FREEC**:
+https://github.com/BoevaLab/FREEC
 
+_Step 1: Fill in the config file (TUMOR-config_control-freec.txt)_
+```
+### For more options see: http://boevalab.com/FREEC/tutorial.html#CONFIG ###
 
+[general]
+chrLenFile = /path/reference/hg38/chr24.hg38.fa.fai
+ploidy = 2
+breakPointThreshold = .8
+coefficientOfVariation = 0.01
+window = 50000
+chrFiles = /path/reference/hg38/chr24Files
+readCountThreshold=10
+numberOfProcesses = 4
+outputDir = /path/out/CNV/freec/tumor
+gemMappabilityFile = /path/reference/hg38/chr-out100m2_hg38.gem
+uniqueMatch = TRUE
+forceGCcontentNormalization = 1
 
+[sample]
+mateFile = /path/out/BQSR/TUMOR_sorted_markdup_R_BQSR.bam
+inputFormat = BAM
+mateOrientation = 0
+### use "mateOrientation=0" for sorted .SAM and .BAM
 
+[control]
+mateFile = /path/out/BQSR/NORMAL_sorted_markdup_R_BQSR.bam
+inputFormat = BAM
+mateOrientation = 0
+
+[BAF]
+### check the chromosome, have "chr" or not
+### SNPfile should be above the makePileup
+SNPfile = /path/reference/hg38/Homo_sapiens_assembly38.dbsnp138.vcf
+makePileup = /path/reference/hg38/Homo_sapiens_assembly38.dbsnp138.bed
+fastaFile = /path/reference/hg38/hg38.fa
+```
+_Step 2: Run the freec pipeline_
+```
+cd /path/out/CNV/freec/tumor && freec -conf TUMOR-config_control-freec.txt
+```
 ## WGBS CpG calling
 
 

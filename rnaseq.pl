@@ -40,9 +40,9 @@ while(<IN>){
 	chomp;
 	next if(/^#/);
 	my @t = split /\t/;
-	my $id = shift @t; #取出id
+	my $id = shift @t; 
 	
-	my ($r1,$r2) = (abs_path($t[0]), abs_path($t[1]));  #获取r1和r2的绝对路径；
+	my ($r1,$r2) = (abs_path($t[0]), abs_path($t[1]));  
 
 	# data filtering
 	make_path "$out/$id/00datafilter";
@@ -67,7 +67,7 @@ while(<IN>){
 	$mk .= "\tsamtools sort $out/$id/01alignment/$id.Aligned.out.bam -o $out/$id/01alignment/$id.bam.sorted 1>$out/$id/01alignment/$id.sort.log 2>$out/$id/01alignment/$id.sort.err && touch 01sort.finished\n";
 	$all .= "01sort.finished ";
 
-	$mk .= "01linkbam.finished: 01sort.finished\n"; #生成flagstat文件，可查看比对结果
+	$mk .= "01linkbam.finished: 01sort.finished\n"; 
 	$mk .= "\tln -s $out/$id/01alignment/$id.Aligned.out.bam $out/$id/01alignment/$id.bam && samtools flagstat $out/$id/01alignment/$id.bam > $out/$id/01alignment/$id.bam.flagstat && touch 01linkbam.finished\n";
 	$all .= "01linkbam.finished ";
 

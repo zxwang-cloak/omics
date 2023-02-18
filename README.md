@@ -58,6 +58,7 @@ gatk --java-options "-Xmx50G" ApplyBQSR \
 
 ### Somatic SNV/indel    
 **Generate the PON (panel of normal) file**
+
 _Step 1: Run Mutect2 in tumor-only mode for each normal sample_
 ```
 gatk Mutect2 \
@@ -85,53 +86,67 @@ gatk CreateSomaticPanelOfNormals \
     -O /path/out/pon.vcf.gz
 ```
 **somatic SNV/indel calling & filter**
+
 _Step 1: Run Mutect2 in tumor-normal mode_
 ```
 gatk Mutect2 \
-    -R /home/uzl3925/zixianWang/ref/hg38/ensembl/hg38.fa \
-    -I /home/uzl3925/zixianWang/CAGA/WGS/Rawdata/NORMAL/NORMAL.merge.recal.bam \
+    -R /path/reference/hg38/hg38.fa \
+    -I /path/out/BQSR/NORMAL_sorted_markdup_R_BQSR.bam \
     -normal NORMAL \
-    -I /home/uzl3925/zixianWang/CAGA/WGS/Rawdata/TUMOR/TUMOR.merge.recal.bam \
+    -I /path/out/BQSR/TUMOR_sorted_markdup_R_BQSR.bam \
     -tumor TUMOR \
-    --germline-resource /home/uzl3925/zixianWang/ref/hg38/gatk/nochr-af-only-gnomad.hg38.vcf \
-    --panel-of-normals /home/uzl3925/zixianWang/CAGA/WGS/out/CAGA_pon.vcf.gz \
-    --f1r2-tar-gz /home/uzl3925/zixianWang/CAGA/WGS/out/MuTect2/TUMOR_f1r2.tar.gz \
-    -O /home/uzl3925/zixianWang/CAGA/WGS/out/MuTect2/TUMOR_mutect2.vcf.gz
+    --germline-resource /path/reference/hg38/gatk/af-only-gnomad.hg38.vcf.gz \
+    --panel-of-normals /path/out/pon.vcf.gz \
+    --f1r2-tar-gz /path/out/MuTect2/TUMOR_f1r2.tar.gz \
+    -O /path/out/MuTect2/TUMOR_mutect2.vcf.gz
 ```
 _Step 2: Get pileup summaries_
 ```
 gatk --java-options "-Xmx50G" GetPileupSummaries \
-    -R /home/uzl3925/zixianWang/ref/hg38/ensembl/hg38.fa \
-    -L /home/uzl3925/zixianWang/ref/hg38/gatk/nochr-wgs_calling_regions.hg38.interval_list \
-    -V /home/uzl3925/zixianWang/ref/hg38/gatk/nochr-af-only-gnomad.hg38.SNP_biallelic.vcf \
-    -I /home/uzl3925/zixianWang/CAGA/WGS/Rawdata/SAMPLE_ID/SAMPLE_ID.merge.recal.bam \
-    -O /home/uzl3925/zixianWang/CAGA/WGS/out/Pileup/SAMPLE_ID-GetPileupSummaries.table 
+    -R /path/reference/hg38/hg38.fa \
+    -L /path/reference/hg38/gatk/wgs_calling_regions.hg38.interval_list \
+    -V /path/reference/hg38/gatk/af-only-gnomad.hg38.SNP_biallelic.vcf.gz \
+    -I /path/out/BQSR/SAMPLE_ID_sorted_markdup_R_BQSR.bam \
+    -O /path/out/Pileup/SAMPLE_ID-GetPileupSummaries.table
 ```
 _Step 3: Calculate contamination_
 ```
 gatk --java-options "-Xmx50G" CalculateContamination \
-    -I /home/uzl3925/zixianWang/CAGA/WGS/out/Pileup/TUMOR-GetPileupSummaries.table \
-    -matched /home/uzl3925/zixianWang/CAGA/WGS/out/Pileup/NORMAL-GetPileupSummaries.table \
-    -O /home/uzl3925/zixianWang/CAGA/WGS/out/Contamination/TUMOR-contamination.table
+    -I /path/out/Pileup/TUMOR-GetPileupSummaries.table \
+    -matched /path/out/Pileup/NORMAL-GetPileupSummaries.table \
+    -O /path/out/Contamination/TUMOR-contamination.table
 ```
 _Step 4: Learn the parameters of a model for orientation bias_
 ```
 gatk --java-options "-Xmx50G" LearnReadOrientationModel \
-    -I /home/uzl3925/zixianWang/CAGA/WGS/out/MuTect2/SAMPLE_ID_f1r2.tar.gz \
-    -O /home/uzl3925/zixianWang/CAGA/WGS/out/read-orientation/SAMPLE_ID_read-orientation-model.tar.gz
+    -I /path/out/MuTect2/TUMOR_f1r2.tar.gz \
+    -O /path/out/read-orientation/TUMOR_read-orientation-model.tar.gz
 ```
 _Step 5: Filter_
 ```
 gatk --java-options "-Xmx50G" FilterMutectCalls \
-    -R /home/uzl3925/zixianWang/ref/hg38/ensembl/hg38.fa \
-    -V /home/uzl3925/zixianWang/CAGA/WGS/out/MuTect2/SAMPLE_ID_mutect2.vcf.gz \
-    --ob-priors /home/uzl3925/zixianWang/CAGA/WGS/out/read-orientation/SAMPLE_ID_read-orientation-model.tar.gz \
-    --contamination-table /home/uzl3925/zixianWang/CAGA/WGS/out/Contamination/SAMPLE_ID-contamination.table \
-    -O /home/uzl3925/zixianWang/CAGA/WGS/out/Filter/SAMPLE_ID_filtered.vcf.gz
+    -R /path/reference/hg38/hg38.fa \
+    -V /path/out/MuTect2/TUMOR_mutect2.vcf.gz \
+    --ob-priors /path/out/read-orientation/ TUMOR_read-orientation-model.tar.gz \
+    --contamination-table /path/out/Contamination/TUMOR-contamination.table \
+    -O /path/out/Filter/TUMOR_filtered.vcf.gz
 ```
 ### Somatic SV
+**calling using Manta**:
+https://github.com/Illumina/manta
 
-
+_Step 1: Generate config file of Manta_
+```
+configManta.py \
+    --normalBam /path/out/BQSR/NORMAL_sorted_markdup_R_BQSR.bam \
+    --tumorBam /path/out/BQSR/TUMOR_sorted_markdup_R_BQSR.bam \
+    --referenceFasta /path/reference/hg38/hg38.fa \
+    --runDir /path/out/Manta/candidateSmallIndels/TUMOR
+```
+_Step 2: Run the workflow script_
+```
+cd /path/out/Manta/candidateSmallIndels/TUMOR && python runWorkflow.py
+```
 
 ### Somatic CNV
 

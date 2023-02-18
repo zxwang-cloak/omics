@@ -85,7 +85,7 @@ gatk CreateSomaticPanelOfNormals \
     -V gendb://./out/PON_db \
     -O /path/out/pon.vcf.gz
 ```
-**somatic SNV/indel calling & filter**
+**Somatic SNV/indel calling & filter**
 
 _Step 1: Run Mutect2 in tumor-normal mode_
 ```
@@ -132,7 +132,7 @@ gatk --java-options "-Xmx50G" FilterMutectCalls \
     -O /path/out/Filter/TUMOR_filtered.vcf.gz
 ```
 ### Somatic SV
-**calling using Manta**:
+**Calling using Manta**:
 https://github.com/Illumina/manta
 
 _Step 1: Generate config file of Manta_
@@ -149,7 +149,7 @@ cd /path/out/Manta/candidateSmallIndels/TUMOR && python runWorkflow.py
 ```
 
 ### Somatic CNV
-**calling using Control-FREEC**:
+**Calling using Control-FREEC**:
 https://github.com/BoevaLab/FREEC
 
 _Step 1: Fill in the config file (TUMOR-config_control-freec.txt)_
@@ -207,8 +207,10 @@ _Step 2: Make the config.txt file (table split)_
 ```
 # sample
 SAMPLE	./samples.lst
+
 # genome
 GENOME	/path/ref
+
 # output
 OUTDIR	./wgbs_out
 ```
@@ -224,6 +226,53 @@ cd ./wgbs_out/SAMPLE_ID && make
 ```
 
 ## RNA-seq gene/transcript expression calling
+**Generate pipeline with the perl script we made**
+
+_Step 1: Make the samples.lst file (table split)_
+```
+sample1 /path/data/sample1_R1.fq.gz /path/data/sample1_R2.fq.gz
+sample2 /path/data/sample2_R1.fq.gz /path/data/sample2_R2.fq.gz
+...
+sampleN /path/data/sampleN_R1.fq.gz /path/data/sampleN_R2.fq.gz
+```
+
+_Step 2: Make the config.txt file (table split)_
+```
+# file
+SAMPLE	./samples.lst
+
+# output
+OUTDIR	./rnaseq_out
+
+# parameter
+THREAD	32
+
+# program
+BIN	/path/software/bin
+
+# index
+INDEX	/path/STAR
+
+# genome
+GTF	/path/ref/hg38/gencode.v38.annotation.gtf
+CHROMSIZE	/path/ref/hg38/chrom_hg38.sizes
+GENOME	/path/ref/hg38/hg38.fa
+```
+
+_Step 3: Generate the pipeline_
+```
+perl rnaseq.pl config.txt
+```
+
+_Step 4: Run the pipeline_
+```
+cd ./rnaseq_out/SAMPLE_ID && make
+```
+
+
+
+
+
 
 
 

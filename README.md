@@ -272,7 +272,8 @@ cd ./rnaseq_out/SAMPLE_ID && make
 ## Alternative splicing analysis
 **Input file: Bam list from RNA-seq**
 
-**Analysis tool: rMATS: https://github.com/Xinglab/rmats-turbo**
+**Analysis tool: rMATS**:
+https://github.com/Xinglab/rmats-turbo
 ```
 rmats.py --b1 SAMPLE1.list.txt \
 	 --b2 SAMPLE2.list.txt \

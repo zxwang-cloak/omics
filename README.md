@@ -269,9 +269,21 @@ _Step 4: Run the pipeline_
 cd ./rnaseq_out/SAMPLE_ID && make
 ```
 
-
-
-
+## Alternative splicing analysis
+**Input file: Bam list from RNA-seq; Analysis tool: rMATS**
+```
+rmats.py --b1 SAMPLE1.list.txt \
+	 --b2 SAMPLE2.list.txt \
+	 --gtf /path/ref/hg38/gencode.v38.annotation.gtf \
+	 --od ./rMATS \
+	 --tmp /path/tmp \
+	 -t paired \
+	 --readLength 150 \
+	 --cstat 0.0001 \
+	 --variable-read-length \
+	 --nthread 10 \
+	 --novelSS
+```
 
 
 

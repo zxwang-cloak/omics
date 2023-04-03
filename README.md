@@ -309,7 +309,7 @@ build_ctat_lib.sh:
 	--dfam_db human \
 	--fusion_annot_lib fusion_lib.Mar2021.dat.gz \
 	--human_gencode_filter \
-	--pfam_db current \
+	--pfam_db current
 ```
 
 _Step 3: Detect fusion gene using STAR-Fusion_
@@ -319,7 +319,7 @@ https://github.com/STAR-Fusion/STAR-Fusion
 STAR-Fusion --genome_lib_dir /path/ctat_genome_lib_build_dir \
 	    --left_fq /path/RNA-seq/cleandata/SAMPLE_ID_R1.fq.gz \
 	    --right_fq /path/RNA-seq/cleandata/SAMPLE_ID_R2.fq.gz \
-	    --output_dir /path/RNA-seq/star_fusion_outdir/SAMPLE_ID \
+	    --output_dir /path/RNA-seq/star_fusion_outdir/SAMPLE_ID
 ```
 
 

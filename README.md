@@ -288,10 +288,39 @@ rmats.py --b1 SAMPLE1.list.txt \
 	 --novelSS
 ```
 
+## Fusion gene detection
+_Step 1: Make sure the version of all three [STAR-Fusion, STAR aligner, CTAT Genome Libs] are compatible_
 
+https://github.com/STAR-Fusion/STAR-Fusion/wiki/STAR-Fusion-release-and-CTAT-Genome-Lib-Compatibility-Matrix
 
+_Step 2: Download the CTAT_lib_source and generate the ctat_genome_lib_build_dir_
 
+https://data.broadinstitute.org/Trinity/CTAT_RESOURCE_LIB/
+```
+wget -c https://data.broadinstitute.org/Trinity/CTAT_RESOURCE_LIB/GRCh38_gencode_v37_CTAT_lib_Mar012021.source.tar.gz
+tar zxvf GRCh38_gencode_v37_CTAT_lib_Mar012021.source.tar.gz
+cd GRCh38_gencode_v37_CTAT_lib_Mar012021.source
+vim build_ctat_lib.sh && sh build_ctat_lib.sh
 
+build_ctat_lib.sh:
+	/path/ctat-genome-lib-builder/prep_genome_lib.pl \
+	--genome_fa GRCh38.primary_assembly.genome.fa \
+	--gtf gencode.v37.annotation.gtf \
+	--dfam_db human \
+	--fusion_annot_lib fusion_lib.Mar2021.dat.gz \
+	--human_gencode_filter \
+	--pfam_db current \
+```
+
+_Step 3: Detect fusion gene using STAR-Fusion_
+
+https://github.com/STAR-Fusion/STAR-Fusion
+```
+STAR-Fusion --genome_lib_dir /path/ctat_genome_lib_build_dir \
+	    --left_fq /path/RNA-seq/cleandata/SAMPLE_ID_R1.fq.gz \
+	    --right_fq /path/RNA-seq/cleandata/SAMPLE_ID_R2.fq.gz \
+	    --output_dir /path/RNA-seq/star_fusion_outdir/SAMPLE_ID \
+```
 
 
 

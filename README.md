@@ -131,6 +131,23 @@ gatk --java-options "-Xmx50G" FilterMutectCalls \
     --contamination-table /path/out/Contamination/TUMOR-contamination.table \
     -O /path/out/Filter/TUMOR_filtered.vcf.gz
 ```
+**SNV/Indel Annotation using ANNOVAR**:
+
+https://annovar.openbioinformatics.org/en/latest/
+
+```
+cd /path/out/Filter
+ls *_filtered.vcf | sed 's/.vcf//g' | while read line; do grep -v "#" $line.vcf | awk '$7 == "PASS" {print $0}' | cat <(grep "#" $line\.vcf) - > $line\_PASS.vcf; done
+
+perl /path/software/annovar/table_annovar.pl \
+	/path/out/Filter/SAMPLE_ID_filtered_PASS.vcf \
+	/path/ANNOVAR_database \
+	-buildver hg38 \
+	-out /path/out/Filter/SAMPLE_ID.Mutect2_PASS.variants \
+	-remove -protocol refGene,exac03,gnomad211_exome,cosmic70,genomicSuperDups \
+	-operation g,f,f,f,r -nastring . --vcfinput -polish
+```
+
 ### Somatic SV
 **Calling using Manta**:
 https://github.com/Illumina/manta

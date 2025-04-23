@@ -209,6 +209,26 @@ _Step 2: Run the freec pipeline_
 ```
 cd /path/out/CNV/freec/tumor && freec -conf TUMOR-config_control-freec.txt
 ```
+
+### MSI analysis
+**Calling using MSIsensor-pro**:
+https://github.com/xjtu-omics/msisensor-pro
+
+_Step 1: scan the reference genome to get microsatellites information_
+```
+msisensor-pro scan -d /path/reference/hg38/hg38.fa -o /path/reference/hg38/hg38.microsites
+```
+_Step 2: evaluates the microsatellite instability for paired samples_
+```
+msisensor-pro msi \
+    -n /path/out/BQSR/NORMAL_sorted_markdup_R_BQSR.bam \
+    -t /path/out/BQSR/TUMOR_sorted_markdup_R_BQSR.bam \
+    -d /path/reference/hg38/hg38.microsites \
+    -o /path/out/MSI/TUMOR_MSI_result \
+    -q 30
+```
+
+
 ## WGBS CpG calling
 **Generate pipeline with the perl script we made**
 
